@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuickBite — Mis pedidos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F5F0E8;
+      --surface: #FFFDF8;
+      --accent: #E84B1A;
+      --dark: #1A1208;
+      --muted: #7A6E5F;
+      --border: #E0D9CC;
+      --tag-bg: #FDE8E1;
+      --tag-text: #B83510;
+      --green: #1D6B3B;
+      --green-bg: #E2F5E9;
+      --blue: #1A4FAF;
+      --blue-bg: #E6EEFB;
+      --yellow: #7A5A00;
+      --yellow-bg: #FDF5D8;
+      --card-radius: 20px;
+      --pill-radius: 100px;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--dark); min-height: 100vh; }
+
+    nav {
+      background: var(--surface); border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 64px; position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.35rem; color: var(--dark); text-decoration: none; }
+    .logo span { color: var(--accent); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a { font-size: 0.875rem; font-weight: 500; color: var(--muted); text-decoration: none; }
+    .nav-links a.active { color: var(--dark); }
+    .btn-cart { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 1.1rem; border-radius: var(--pill-radius); background: var(--accent); color: #fff; border: none; font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; text-decoration: none; }
+
+    .page-wrap { max-width: 860px; margin: 0 auto; padding: 2.5rem 2rem; }
+
+    .page-header { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1.75rem; }
+    .page-title { font-family: 'Syne', sans-serif; font-size: 1.8rem; font-weight: 800; letter-spacing: -0.75px; }
+
+    /* FILTER TABS */
+    .filter-tabs { display: flex; gap: 0.5rem; margin-bottom: 1.75rem; }
+    .filter-tab {
+      padding: 0.45rem 1.1rem; border-radius: var(--pill-radius); border: 1.5px solid var(--border);
+      font-size: 0.825rem; font-weight: 500; color: var(--muted); background: var(--surface); cursor: pointer; transition: all 0.18s;
+    }
+    .filter-tab.active { background: var(--dark); color: #fff; border-color: var(--dark); }
+    .filter-tab:hover:not(.active) { border-color: var(--muted); color: var(--dark); }
+
+    /* ORDER CARDS */
+    .order-list { display: flex; flex-direction: column; gap: 1.1rem; }
+
+    .order-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); overflow: hidden;
+      transition: box-shadow 0.2s;
+    }
+    .order-card:hover { box-shadow: 0 6px 24px rgba(26,18,8,0.07); }
+
+    .order-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 1rem 1.25rem; border-bottom: 1px solid var(--border);
+    }
+    .order-header-left { display: flex; align-items: center; gap: 0.85rem; }
+    .order-resto-icon { width: 42px; height: 42px; border-radius: 10px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 1.4rem; flex-shrink: 0; }
+    .order-resto-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.15rem; }
+    .order-date { font-size: 0.75rem; color: var(--muted); }
+
+    .status-badge {
+      font-size: 0.72rem; font-weight: 600; padding: 0.3rem 0.8rem; border-radius: var(--pill-radius); white-space: nowrap;
+    }
+    .status-entregado { background: var(--green-bg); color: var(--green); }
+    .status-camino { background: var(--blue-bg); color: var(--blue); }
+    .status-preparando { background: var(--yellow-bg); color: var(--yellow); }
+    .status-cancelado { background: #FDE8E8; color: #9B2020; }
+
+    .order-body { padding: 1rem 1.25rem; }
+    .order-items-list { list-style: none; display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1rem; }
+    .order-items-list li { font-size: 0.875rem; color: var(--muted); display: flex; align-items: center; gap: 0.5rem; }
+    .order-items-list li::before { content: '·'; font-size: 1.1rem; color: var(--accent); }
+
+    .order-footer {
+      display: flex; align-items: center; justify-content: space-between; padding-top: 0.75rem; border-top: 1px solid var(--border);
+    }
+    .order-total { font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; }
+    .order-total span { font-family: 'DM Sans', sans-serif; font-size: 0.78rem; font-weight: 400; color: var(--muted); margin-right: 0.35rem; }
+
+    .order-actions { display: flex; gap: 0.6rem; }
+    .btn-sm {
+      padding: 0.4rem 1rem; border-radius: var(--pill-radius); font-size: 0.78rem; font-weight: 500; cursor: pointer; font-family: 'DM Sans', sans-serif; transition: all 0.15s;
+    }
+    .btn-outline { background: transparent; border: 1.5px solid var(--border); color: var(--dark); }
+    .btn-outline:hover { border-color: var(--dark); }
+    .btn-filled { background: var(--accent); border: 1.5px solid var(--accent); color: #fff; }
+    .btn-filled:hover { background: #C93E12; }
+
+    /* ACTIVE ORDER TRACKER */
+    .tracker-block { padding: 1rem 1.25rem 0; }
+    .tracker-label { font-size: 0.72rem; font-weight: 600; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 0.75rem; }
+    .tracker-steps { display: flex; align-items: center; gap: 0; position: relative; margin-bottom: 1rem; }
+    .tracker-step { display: flex; flex-direction: column; align-items: center; flex: 1; }
+    .step-dot {
+      width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+      font-size: 0.75rem; font-weight: 700; z-index: 1; position: relative;
+    }
+    .step-dot.done { background: var(--green); color: #fff; }
+    .step-dot.active { background: var(--accent); color: #fff; }
+    .step-dot.pending { background: var(--border); color: var(--muted); }
+    .step-label { font-size: 0.65rem; color: var(--muted); margin-top: 0.3rem; text-align: center; }
+    .step-label.active-label { color: var(--accent); font-weight: 600; }
+    .tracker-line { flex: 1; height: 2px; background: var(--border); margin-top: -14px; }
+    .tracker-line.done { background: var(--green); }
+
+    /* EMPTY STATE */
+    .empty-state { text-align: center; padding: 4rem 1rem; }
+    .empty-icon { font-size: 3.5rem; display: block; margin-bottom: 1rem; }
+    .empty-title { font-family: 'Syne', sans-serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .empty-sub { font-size: 0.875rem; color: var(--muted); margin-bottom: 1.5rem; }
+    .btn-primary { padding: 0.7rem 1.75rem; background: var(--accent); color: #fff; border: none; border-radius: var(--pill-radius); font-family: 'DM Sans', sans-serif; font-size: 0.875rem; font-weight: 500; cursor: pointer; text-decoration: none; display: inline-block; }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html">Quick<span>Bite</span></a>
+  <ul class="nav-links">
+    <li><a href="index.html">Inicio</a></li>
+    <li><a href="index.html">Restaurantes</a></li>
+    <li><a href="pedidos.html" class="active">Mis pedidos</a></li>
+  </ul>
+  <a class="btn-cart" href="carrito.html">🛒 Carrito</a>
+</nav>
+
+<div class="page-wrap">
+  <div class="page-header">
+    <h1 class="page-title">Mis pedidos</h1>
+  </div>
+
+  <div class="filter-tabs">
+    <button class="filter-tab active" onclick="filterOrders('todos', this)">Todos</button>
+    <button class="filter-tab" onclick="filterOrders('activos', this)">En camino</button>
+    <button class="filter-tab" onclick="filterOrders('entregados', this)">Entregados</button>
+    <button class="filter-tab" onclick="filterOrders('cancelados', this)">Cancelados</button>
+  </div>
+
+  <div class="order-list" id="orderList">
+
+    <!-- PEDIDO ACTIVO -->
+    <div class="order-card" data-status="camino">
+      <div class="order-header">
+        <div class="order-header-left">
+          <div class="order-resto-icon">🌮</div>
+          <div>
+            <div class="order-resto-name">El Güero Taquería</div>
+            <div class="order-date">Hoy · 13:45 · #QB-0041</div>
+          </div>
+        </div>
+        <span class="status-badge status-camino">🛵 En camino</span>
+      </div>
+      <div class="tracker-block">
+        <div class="tracker-label">Seguimiento del pedido</div>
+        <div class="tracker-steps">
+          <div class="tracker-step">
+            <div class="step-dot done">✓</div>
+            <div class="step-label">Confirmado</div>
+          </div>
+          <div class="tracker-line done"></div>
+          <div class="tracker-step">
+            <div class="step-dot done">✓</div>
+            <div class="step-label">Preparando</div>
+          </div>
+          <div class="tracker-line done"></div>
+          <div class="tracker-step">
+            <div class="step-dot active">🛵</div>
+            <div class="step-label active-label">En camino</div>
+          </div>
+          <div class="tracker-line"></div>
+          <div class="tracker-step">
+            <div class="step-dot pending">🏠</div>
+            <div class="step-label">Entregado</div>
+          </div>
+        </div>
+      </div>
+      <div class="order-body">
+        <ul class="order-items-list">
+          <li>Tacos de pastor x3</li>
+          <li>Agua de horchata x1</li>
+        </ul>
+        <div class="order-footer">
+          <div class="order-total"><span>Total</span>$114</div>
+          <div class="order-actions">
+            <button class="btn-sm btn-outline" onclick="alert('Abriendo mapa de rastreo…')">📍 Rastrear</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PEDIDO ENTREGADO 1 -->
+    <div class="order-card" data-status="entregado">
+      <div class="order-header">
+        <div class="order-header-left">
+          <div class="order-resto-icon">🍕</div>
+          <div>
+            <div class="order-resto-name">La Italiana</div>
+            <div class="order-date">Ayer · 20:12 · #QB-0039</div>
+          </div>
+        </div>
+        <span class="status-badge status-entregado">✓ Entregado</span>
+      </div>
+      <div class="order-body">
+        <ul class="order-items-list">
+          <li>Pizza Margherita x1</li>
+          <li>Pan de ajo x2</li>
+          <li>Refresco x1</li>
+        </ul>
+        <div class="order-footer">
+          <div class="order-total"><span>Total</span>$213</div>
+          <div class="order-actions">
+            <button class="btn-sm btn-outline" onclick="alert('Mostrando detalle del pedido #QB-0039')">Ver detalle</button>
+            <button class="btn-sm btn-filled" onclick="alert('Agregando al carrito…')">Pedir de nuevo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PEDIDO ENTREGADO 2 -->
+    <div class="order-card" data-status="entregado">
+      <div class="order-header">
+        <div class="order-header-left">
+          <div class="order-resto-icon">🍣</div>
+          <div>
+            <div class="order-resto-name">Tokyo Bites</div>
+            <div class="order-date">28 may · 19:30 · #QB-0035</div>
+          </div>
+        </div>
+        <span class="status-badge status-entregado">✓ Entregado</span>
+      </div>
+      <div class="order-body">
+        <ul class="order-items-list">
+          <li>Roll California x2</li>
+          <li>Edamame x1</li>
+          <li>Miso soup x1</li>
+        </ul>
+        <div class="order-footer">
+          <div class="order-total"><span>Total</span>$320</div>
+          <div class="order-actions">
+            <button class="btn-sm btn-outline" onclick="alert('Mostrando detalle del pedido #QB-0035')">Ver detalle</button>
+            <button class="btn-sm btn-filled" onclick="alert('Agregando al carrito…')">Pedir de nuevo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PEDIDO CANCELADO -->
+    <div class="order-card" data-status="cancelado">
+      <div class="order-header">
+        <div class="order-header-left">
+          <div class="order-resto-icon">🍔</div>
+          <div>
+            <div class="order-resto-name">Burger Bros</div>
+            <div class="order-date">25 may · 14:00 · #QB-0031</div>
+          </div>
+        </div>
+        <span class="status-badge status-cancelado">✕ Cancelado</span>
+      </div>
+      <div class="order-body">
+        <ul class="order-items-list">
+          <li>Smash burger doble x1</li>
+          <li>Papas fritas x1</li>
+        </ul>
+        <div class="order-footer">
+          <div class="order-total"><span>Total</span>$178</div>
+          <div class="order-actions">
+            <button class="btn-sm btn-outline" onclick="alert('Mostrando detalle del pedido #QB-0031')">Ver detalle</button>
+            <button class="btn-sm btn-filled" onclick="alert('Agregando al carrito…')">Pedir de nuevo</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- EMPTY STATE (oculto por defecto) -->
+  <div class="empty-state hidden" id="emptyState">
+    <span class="empty-icon">🍽️</span>
+    <div class="empty-title">Sin pedidos aquí</div>
+    <div class="empty-sub">No tienes pedidos en esta categoría todavía.</div>
+    <a class="btn-primary" href="index.html">Explorar restaurantes</a>
+  </div>
+
+</div>
+
+<script>
+  function filterOrders(tipo, btn) {
+    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+
+    const cards = document.querySelectorAll('.order-card');
+    let visible = 0;
+
+    cards.forEach(card => {
+      const status = card.dataset.status;
+      let show = false;
+      if (tipo === 'todos') show = true;
+      else if (tipo === 'activos' && status === 'camino') show = true;
+      else if (tipo === 'entregados' && status === 'entregado') show = true;
+      else if (tipo === 'cancelados' && status === 'cancelado') show = true;
+
+      card.style.display = show ? 'block' : 'none';
+      if (show) visible++;
+    });
+
+    document.getElementById('emptyState').classList.toggle('hidden', visible > 0);
+  }
+</script>
+
+</body>
+</html>

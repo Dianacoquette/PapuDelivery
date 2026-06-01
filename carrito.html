@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuickBite — Carrito</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #F5F0E8;
+      --surface: #FFFDF8;
+      --accent: #E84B1A;
+      --dark: #1A1208;
+      --muted: #7A6E5F;
+      --border: #E0D9CC;
+      --tag-bg: #FDE8E1;
+      --tag-text: #B83510;
+      --green: #1D6B3B;
+      --green-bg: #E2F5E9;
+      --card-radius: 20px;
+      --pill-radius: 100px;
+      --input-radius: 12px;
+    }
+    body { font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--dark); min-height: 100vh; }
+
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 2rem; height: 64px; position: sticky; top: 0; z-index: 100;
+    }
+    .logo { font-family: 'Syne', sans-serif; font-weight: 800; font-size: 1.35rem; color: var(--dark); text-decoration: none; }
+    .logo span { color: var(--accent); }
+    .nav-back { display: flex; align-items: center; gap: 0.5rem; font-size: 0.875rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .nav-back:hover { color: var(--dark); }
+
+    .page-wrap { max-width: 1060px; margin: 0 auto; padding: 2.5rem 2rem; display: grid; grid-template-columns: 1fr 380px; gap: 2rem; align-items: start; }
+
+    .section-title { font-family: 'Syne', sans-serif; font-size: 1.5rem; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 1.25rem; }
+
+    /* CART ITEMS */
+    .cart-list { display: flex; flex-direction: column; gap: 1rem; }
+
+    .cart-item {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius);
+      padding: 1rem 1.25rem; display: flex; align-items: center; gap: 1rem;
+    }
+    .item-emoji { width: 56px; height: 56px; border-radius: 12px; background: var(--bg); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; }
+    .item-info { flex: 1; min-width: 0; }
+    .item-name { font-weight: 600; font-size: 0.95rem; margin-bottom: 0.2rem; }
+    .item-resto { font-size: 0.78rem; color: var(--muted); }
+    .item-controls { display: flex; align-items: center; gap: 0.6rem; }
+    .qty-btn { width: 30px; height: 30px; border-radius: 50%; border: 1.5px solid var(--border); background: var(--surface); font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: all 0.15s; color: var(--dark); }
+    .qty-btn:hover { border-color: var(--accent); color: var(--accent); }
+    .qty-num { font-family: 'Syne', sans-serif; font-size: 0.95rem; font-weight: 700; min-width: 18px; text-align: center; }
+    .item-price { font-family: 'Syne', sans-serif; font-weight: 700; font-size: 1rem; color: var(--accent); min-width: 60px; text-align: right; }
+    .item-remove { font-size: 0.78rem; color: var(--muted); cursor: pointer; text-decoration: underline; margin-left: 0.5rem; }
+    .item-remove:hover { color: var(--accent); }
+
+    .cart-empty { text-align: center; padding: 3rem 1rem; color: var(--muted); }
+    .cart-empty-icon { font-size: 3rem; display: block; margin-bottom: 0.75rem; }
+
+    /* CHECKOUT CARD */
+    .checkout-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: var(--card-radius); padding: 1.5rem; position: sticky; top: 80px;
+    }
+    .checkout-title { font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-bottom: 1.25rem; }
+
+    .address-block { margin-bottom: 1.25rem; }
+    .field-label { font-size: 0.78rem; font-weight: 500; color: var(--muted); margin-bottom: 0.4rem; }
+    .form-input {
+      width: 100%; padding: 0.65rem 0.9rem; border: 1.5px solid var(--border); border-radius: var(--input-radius);
+      font-family: 'DM Sans', sans-serif; font-size: 0.875rem; color: var(--dark); background: var(--bg); outline: none; transition: border-color 0.18s;
+    }
+    .form-input:focus { border-color: var(--accent); }
+    .form-input::placeholder { color: #BFB8AC; }
+
+    .payment-methods { display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1.25rem; }
+    .payment-option {
+      display: flex; align-items: center; gap: 0.75rem; padding: 0.65rem 0.9rem;
+      border: 1.5px solid var(--border); border-radius: var(--input-radius); cursor: pointer; transition: all 0.18s;
+    }
+    .payment-option.selected { border-color: var(--accent); background: var(--tag-bg); }
+    .payment-option input[type=radio] { accent-color: var(--accent); }
+    .payment-option label { font-size: 0.875rem; cursor: pointer; display: flex; align-items: center; gap: 0.5rem; }
+
+    .promo-row { display: flex; gap: 0.5rem; margin-bottom: 1.25rem; }
+    .promo-input { flex: 1; }
+    .btn-promo {
+      padding: 0 1rem; background: var(--dark); color: #fff; border: none; border-radius: var(--input-radius);
+      font-family: 'DM Sans', sans-serif; font-size: 0.8rem; font-weight: 500; cursor: pointer; transition: background 0.18s; white-space: nowrap;
+    }
+    .btn-promo:hover { background: #333; }
+
+    .promo-applied { display: flex; align-items: center; justify-content: space-between; background: var(--green-bg); border-radius: 8px; padding: 0.5rem 0.75rem; margin-bottom: 1.25rem; font-size: 0.8rem; color: var(--green); font-weight: 500; }
+    .promo-applied.hidden { display: none; }
+    .promo-remove { cursor: pointer; font-size: 0.75rem; opacity: 0.7; }
+
+    .divider-line { height: 1px; background: var(--border); margin: 1rem 0; }
+
+    .summary-row { display: flex; justify-content: space-between; font-size: 0.875rem; color: var(--muted); margin-bottom: 0.5rem; }
+    .summary-row.discount { color: var(--green); }
+    .summary-total { display: flex; justify-content: space-between; font-family: 'Syne', sans-serif; font-size: 1.1rem; font-weight: 700; margin-top: 0.75rem; }
+
+    .btn-order {
+      width: 100%; padding: 0.9rem; background: var(--accent); color: #fff; border: none; border-radius: var(--input-radius);
+      font-family: 'Syne', sans-serif; font-size: 1rem; font-weight: 700; cursor: pointer; transition: background 0.18s; margin-top: 1.25rem;
+    }
+    .btn-order:hover { background: #C93E12; }
+
+    .secure-note { text-align: center; font-size: 0.72rem; color: var(--muted); margin-top: 0.75rem; }
+  </style>
+</head>
+<body>
+
+<nav>
+  <a class="logo" href="index.html">Quick<span>Bite</span></a>
+  <a class="nav-back" href="index.html">← Seguir comprando</a>
+</nav>
+
+<div class="page-wrap">
+
+  <!-- LEFT: CART ITEMS -->
+  <div>
+    <h1 class="section-title">Tu carrito 🛒</h1>
+    <div class="cart-list" id="cartList">
+
+      <div class="cart-item" data-id="1" data-price="89">
+        <div class="item-emoji">🌮</div>
+        <div class="item-info">
+          <div class="item-name">Tacos de pastor x3</div>
+          <div class="item-resto">El Güero Taquería</div>
+        </div>
+        <div class="item-controls">
+          <button class="qty-btn" onclick="changeQty(1, -1)">−</button>
+          <span class="qty-num" id="qty-1">1</span>
+          <button class="qty-btn" onclick="changeQty(1, 1)">+</button>
+        </div>
+        <div class="item-price" id="price-1">$89</div>
+        <span class="item-remove" onclick="removeItem(1)">Eliminar</span>
+      </div>
+
+      <div class="cart-item" data-id="2" data-price="149">
+        <div class="item-emoji">🍕</div>
+        <div class="item-info">
+          <div class="item-name">Pizza Margherita</div>
+          <div class="item-resto">La Italiana</div>
+        </div>
+        <div class="item-controls">
+          <button class="qty-btn" onclick="changeQty(2, -1)">−</button>
+          <span class="qty-num" id="qty-2">1</span>
+          <button class="qty-btn" onclick="changeQty(2, 1)">+</button>
+        </div>
+        <div class="item-price" id="price-2">$149</div>
+        <span class="item-remove" onclick="removeItem(2)">Eliminar</span>
+      </div>
+
+      <div class="cart-item" data-id="3" data-price="129">
+        <div class="item-emoji">🍣</div>
+        <div class="item-info">
+          <div class="item-name">Roll California</div>
+          <div class="item-resto">Tokyo Bites</div>
+        </div>
+        <div class="item-controls">
+          <button class="qty-btn" onclick="changeQty(3, -1)">−</button>
+          <span class="qty-num" id="qty-3">2</span>
+          <button class="qty-btn" onclick="changeQty(3, 1)">+</button>
+        </div>
+        <div class="item-price" id="price-3">$258</div>
+        <span class="item-remove" onclick="removeItem(3)">Eliminar</span>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- RIGHT: CHECKOUT -->
+  <div class="checkout-card">
+    <div class="checkout-title">Resumen del pedido</div>
+
+    <div class="address-block">
+      <div class="field-label">Dirección de entrega</div>
+      <input class="form-input" type="text" placeholder="Calle, número, colonia…" />
+    </div>
+
+    <div class="field-label" style="margin-bottom:0.5rem">Método de pago</div>
+    <div class="payment-methods">
+      <div class="payment-option selected" onclick="selectPayment(this)">
+        <input type="radio" name="pago" checked /> <label>💳 Tarjeta de crédito / débito</label>
+      </div>
+      <div class="payment-option" onclick="selectPayment(this)">
+        <input type="radio" name="pago" /> <label>📱 Pago en línea (OXXO Pay)</label>
+      </div>
+      <div class="payment-option" onclick="selectPayment(this)">
+        <input type="radio" name="pago" /> <label>💵 Efectivo al entregar</label>
+      </div>
+    </div>
+
+    <div class="field-label">Código de descuento</div>
+    <div class="promo-row">
+      <input class="form-input promo-input" type="text" id="promoInput" placeholder="Ej: FIRST30" />
+      <button class="btn-promo" onclick="applyPromo()">Aplicar</button>
+    </div>
+    <div class="promo-applied hidden" id="promoApplied">
+      🎉 Código FIRST30 aplicado — $30 de descuento
+      <span class="promo-remove" onclick="removePromo()">✕</span>
+    </div>
+
+    <div class="divider-line"></div>
+
+    <div class="summary-row"><span>Subtotal</span><span id="subtotal">$496</span></div>
+    <div class="summary-row"><span>Envío</span><span id="envio">$25</span></div>
+    <div class="summary-row discount hidden" id="descRow"><span>Descuento</span><span>−$30</span></div>
+    <div class="summary-total"><span>Total</span><span id="total">$521</span></div>
+
+    <button class="btn-order" onclick="placeOrder()">Confirmar pedido →</button>
+    <div class="secure-note">🔒 Pago seguro · Datos cifrados</div>
+  </div>
+
+</div>
+
+<script>
+  const baseItems = { 1: 89, 2: 149, 3: 129 };
+  const qtys = { 1: 1, 2: 1, 3: 2 };
+  let promoActive = false;
+
+  function changeQty(id, delta) {
+    qtys[id] = Math.max(1, qtys[id] + delta);
+    document.getElementById('qty-' + id).textContent = qtys[id];
+    document.getElementById('price-' + id).textContent = '$' + (baseItems[id] * qtys[id]);
+    recalc();
+  }
+
+  function removeItem(id) {
+    const el = document.querySelector('[data-id="' + id + '"]');
+    if (el) el.remove();
+    delete qtys[id];
+    delete baseItems[id];
+    recalc();
+  }
+
+  function recalc() {
+    let sub = 0;
+    for (const id in qtys) sub += (baseItems[id] || 0) * qtys[id];
+    const envio = sub > 0 ? 25 : 0;
+    const desc = promoActive ? 30 : 0;
+    document.getElementById('subtotal').textContent = '$' + sub;
+    document.getElementById('envio').textContent = sub > 0 ? '$25' : '$0';
+    document.getElementById('total').textContent = '$' + Math.max(0, sub + envio - desc);
+  }
+
+  function selectPayment(el) {
+    document.querySelectorAll('.payment-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    el.querySelector('input').checked = true;
+  }
+
+  function applyPromo() {
+    const val = document.getElementById('promoInput').value.trim().toUpperCase();
+    if (val === 'FIRST30') {
+      promoActive = true;
+      document.getElementById('promoApplied').classList.remove('hidden');
+      document.getElementById('descRow').classList.remove('hidden');
+      recalc();
+    } else {
+      alert('Código no válido. Prueba con FIRST30');
+    }
+  }
+
+  function removePromo() {
+    promoActive = false;
+    document.getElementById('promoApplied').classList.add('hidden');
+    document.getElementById('descRow').classList.add('hidden');
+    document.getElementById('promoInput').value = '';
+    recalc();
+  }
+
+  function placeOrder() {
+    alert('✅ ¡Pedido confirmado! Redirigiendo a mis pedidos…');
+    window.location.href = 'pedidos.html';
+  }
+</script>
+</body>
+</html>

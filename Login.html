@@ -1,0 +1,538 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuickBite — Iniciar sesión</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F5F0E8;
+      --surface: #FFFDF8;
+      --accent: #E84B1A;
+      --accent-dim: #F2836A;
+      --dark: #1A1208;
+      --muted: #7A6E5F;
+      --border: #E0D9CC;
+      --tag-bg: #FDE8E1;
+      --tag-text: #B83510;
+      --card-radius: 20px;
+      --pill-radius: 100px;
+      --input-radius: 12px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      min-height: 100vh;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+    }
+
+    /* LEFT PANEL */
+    .left-panel {
+      background: var(--dark);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 2.5rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .left-panel::before {
+      content: '';
+      position: absolute;
+      width: 420px;
+      height: 420px;
+      border-radius: 50%;
+      background: var(--accent);
+      opacity: 0.12;
+      bottom: -100px;
+      left: -100px;
+    }
+
+    .left-panel::after {
+      content: '';
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background: var(--accent-dim);
+      opacity: 0.08;
+      top: 60px;
+      right: -80px;
+    }
+
+    .panel-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      color: #fff;
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-logo span { color: var(--accent); }
+
+    .panel-center {
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-center h2 {
+      font-family: 'Syne', sans-serif;
+      font-size: 2.6rem;
+      font-weight: 800;
+      color: #fff;
+      line-height: 1.1;
+      letter-spacing: -1px;
+      margin-bottom: 1rem;
+    }
+
+    .panel-center h2 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .panel-center p {
+      font-size: 0.95rem;
+      color: rgba(255,255,255,0.5);
+      line-height: 1.7;
+      max-width: 320px;
+    }
+
+    .feature-list {
+      list-style: none;
+      margin-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+    }
+
+    .feature-list li {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      font-size: 0.875rem;
+      color: rgba(255,255,255,0.7);
+    }
+
+    .feature-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.9rem;
+      flex-shrink: 0;
+    }
+
+    .panel-footer {
+      font-size: 0.75rem;
+      color: rgba(255,255,255,0.25);
+      position: relative;
+      z-index: 1;
+    }
+
+    .panel-footer code {
+      font-family: 'DM Mono', monospace;
+      background: rgba(255,255,255,0.07);
+      padding: 0.15rem 0.4rem;
+      border-radius: 5px;
+    }
+
+    /* RIGHT PANEL */
+    .right-panel {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem;
+    }
+
+    .auth-box {
+      width: 100%;
+      max-width: 420px;
+    }
+
+    /* TABS */
+    .tab-bar {
+      display: flex;
+      background: var(--border);
+      border-radius: var(--pill-radius);
+      padding: 4px;
+      margin-bottom: 2rem;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 0.55rem;
+      border: none;
+      border-radius: var(--pill-radius);
+      background: transparent;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .tab-btn.active {
+      background: var(--surface);
+      color: var(--dark);
+      box-shadow: 0 1px 4px rgba(26,18,8,0.08);
+    }
+
+    /* FORM */
+    .form-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin-bottom: 0.35rem;
+    }
+
+    .form-subtitle {
+      font-size: 0.875rem;
+      color: var(--muted);
+      margin-bottom: 1.75rem;
+      line-height: 1.6;
+    }
+
+    .form-group {
+      margin-bottom: 1.1rem;
+    }
+
+    .form-label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--dark);
+      margin-bottom: 0.4rem;
+    }
+
+    .form-input {
+      width: 100%;
+      padding: 0.75rem 1rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--input-radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.9rem;
+      color: var(--dark);
+      background: var(--surface);
+      outline: none;
+      transition: border-color 0.18s;
+    }
+
+    .form-input::placeholder { color: #BFB8AC; }
+
+    .form-input:focus {
+      border-color: var(--accent);
+    }
+
+    .form-input-wrap {
+      position: relative;
+    }
+
+    .input-icon {
+      position: absolute;
+      right: 0.9rem;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1rem;
+      color: var(--muted);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+    }
+
+    .forgot-link {
+      display: block;
+      text-align: right;
+      font-size: 0.78rem;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: -0.5rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .forgot-link:hover { text-decoration: underline; }
+
+    .btn-submit {
+      width: 100%;
+      padding: 0.875rem;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: var(--input-radius);
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      cursor: pointer;
+      transition: background 0.18s;
+      margin-bottom: 1.25rem;
+    }
+
+    .btn-submit:hover { background: #C93E12; }
+
+    .divider {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .divider-line {
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    .divider-text {
+      font-size: 0.75rem;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .social-btns {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.75rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .social-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.65rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--input-radius);
+      background: var(--surface);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.83rem;
+      font-weight: 500;
+      color: var(--dark);
+      cursor: pointer;
+      transition: background 0.18s;
+    }
+
+    .social-btn:hover { background: var(--bg); }
+
+    .terms-note {
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .terms-note a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    /* PANELS show/hide */
+    .panel { display: none; }
+    .panel.active { display: block; }
+  </style>
+</head>
+<body>
+
+  <!-- LEFT -->
+  <div class="left-panel">
+    <div class="panel-logo">Quick<span>Bite</span></div>
+
+    <div class="panel-center">
+      <h2>Come bien,<br/>sin salir<br/><em>de casa.</em></h2>
+      <p>Ordena desde los mejores restaurantes de tu ciudad en minutos.</p>
+      <ul class="feature-list">
+        <li>
+          <div class="feature-icon">🚴</div>
+          Entrega en 30 minutos o menos
+        </li>
+        <li>
+          <div class="feature-icon">📍</div>
+          Rastreo en tiempo real de tu pedido
+        </li>
+        <li>
+          <div class="feature-icon">💳</div>
+          Pago seguro con múltiples métodos
+        </li>
+        <li>
+          <div class="feature-icon">🌎</div>
+          Disponible en México, Colombia y España
+        </li>
+      </ul>
+    </div>
+
+    <div class="panel-footer">
+      Versión <code>v1.0.0</code> · Práctica Git — QuickBite
+    </div>
+  </div>
+
+  <!-- RIGHT -->
+  <div class="right-panel">
+    <div class="auth-box">
+
+      <div class="tab-bar">
+        <button class="tab-btn active" onclick="switchTab('login', this)">Iniciar sesión</button>
+        <button class="tab-btn" onclick="switchTab('register', this)">Crear cuenta</button>
+      </div>
+
+      <!-- LOGIN -->
+      <div id="panel-login" class="panel active">
+        <h1 class="form-title">Bienvenido de vuelta 👋</h1>
+        <p class="form-subtitle">Ingresa tus datos para continuar con tu cuenta.</p>
+
+        <div class="form-group">
+          <label class="form-label" for="login-email">Correo electrónico</label>
+          <input class="form-input" type="email" id="login-email" placeholder="tucorreo@ejemplo.com" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="login-pass">Contraseña</label>
+          <div class="form-input-wrap">
+            <input class="form-input" type="password" id="login-pass" placeholder="••••••••" />
+            <span class="input-icon" onclick="togglePass('login-pass', this)">👁</span>
+          </div>
+        </div>
+
+        <a href="#" class="forgot-link">¿Olvidaste tu contraseña?</a>
+
+        <button class="btn-submit" onclick="handleLogin()">Entrar a mi cuenta</button>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <span class="divider-text">o continúa con</span>
+          <div class="divider-line"></div>
+        </div>
+
+        <div class="social-btns">
+          <button class="social-btn">🌐 Google</button>
+          <button class="social-btn">📘 Facebook</button>
+        </div>
+
+        <p class="terms-note">
+          Al continuar, aceptas nuestros <a href="#">Términos de uso</a> y <a href="#">Política de privacidad</a>.
+        </p>
+      </div>
+
+      <!-- REGISTER -->
+      <div id="panel-register" class="panel">
+        <h1 class="form-title">Crear cuenta 🍽️</h1>
+        <p class="form-subtitle">Es gratis. Únete y empieza a ordenar hoy.</p>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="reg-nombre">Nombre</label>
+            <input class="form-input" type="text" id="reg-nombre" placeholder="Ana" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="reg-apellido">Apellido</label>
+            <input class="form-input" type="text" id="reg-apellido" placeholder="García" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-email">Correo electrónico</label>
+          <input class="form-input" type="email" id="reg-email" placeholder="tucorreo@ejemplo.com" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-tel">Teléfono</label>
+          <input class="form-input" type="tel" id="reg-tel" placeholder="+52 55 0000 0000" />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="reg-pass">Contraseña</label>
+          <div class="form-input-wrap">
+            <input class="form-input" type="password" id="reg-pass" placeholder="Mínimo 8 caracteres" />
+            <span class="input-icon" onclick="togglePass('reg-pass', this)">👁</span>
+          </div>
+        </div>
+
+        <button class="btn-submit" style="margin-top:0.5rem" onclick="handleRegister()">Crear mi cuenta</button>
+
+        <div class="divider">
+          <div class="divider-line"></div>
+          <span class="divider-text">o regístrate con</span>
+          <div class="divider-line"></div>
+        </div>
+
+        <div class="social-btns">
+          <button class="social-btn">🌐 Google</button>
+          <button class="social-btn">📘 Facebook</button>
+        </div>
+
+        <p class="terms-note">
+          Al registrarte aceptas nuestros <a href="#">Términos de uso</a> y <a href="#">Política de privacidad</a>.
+        </p>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    function switchTab(tab, btn) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + tab).classList.add('active');
+    }
+
+    function togglePass(id, icon) {
+      const input = document.getElementById(id);
+      if (input.type === 'password') {
+        input.type = 'text';
+        icon.textContent = '🙈';
+      } else {
+        input.type = 'password';
+        icon.textContent = '👁';
+      }
+    }
+
+    function handleLogin() {
+      const email = document.getElementById('login-email').value;
+      const pass = document.getElementById('login-pass').value;
+      if (!email || !pass) {
+        alert('Por favor completa todos los campos.');
+        return;
+      }
+      alert('✅ Sesión iniciada. Redirigiendo a inicio…');
+      window.location.href = 'index.html';
+    }
+
+    function handleRegister() {
+      const nombre = document.getElementById('reg-nombre').value;
+      const email = document.getElementById('reg-email').value;
+      const pass = document.getElementById('reg-pass').value;
+      if (!nombre || !email || !pass) {
+        alert('Por favor completa los campos requeridos.');
+        return;
+      }
+      if (pass.length < 8) {
+        alert('La contraseña debe tener al menos 8 caracteres.');
+        return;
+      }
+      alert('🎉 Cuenta creada con éxito. Bienvenido a QuickBite!');
+      window.location.href = 'index.html';
+    }
+  </script>
+
+</body>
+</html>

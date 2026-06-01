@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>QuickBite — Delivery App</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #F5F0E8;
+      --surface: #FFFDF8;
+      --accent: #E84B1A;
+      --accent-dim: #F2836A;
+      --dark: #1A1208;
+      --muted: #7A6E5F;
+      --border: #E0D9CC;
+      --tag-bg: #FDE8E1;
+      --tag-text: #B83510;
+      --green: #1D6B3B;
+      --green-bg: #E2F5E9;
+      --card-radius: 20px;
+      --pill-radius: 100px;
+    }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--bg);
+      color: var(--dark);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* NAV */
+    nav {
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 2rem;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.35rem;
+      letter-spacing: -0.5px;
+      color: var(--dark);
+    }
+
+    .logo span { color: var(--accent); }
+
+    .nav-links {
+      display: flex;
+      gap: 2rem;
+      list-style: none;
+    }
+
+    .nav-links a {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+
+    .nav-links a:hover, .nav-links a.active { color: var(--dark); }
+
+    .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.5rem 1.1rem;
+      border-radius: var(--pill-radius);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.18s;
+      border: 1.5px solid transparent;
+    }
+
+    .btn-ghost {
+      background: transparent;
+      border-color: var(--border);
+      color: var(--dark);
+    }
+
+    .btn-ghost:hover { background: var(--border); }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .btn-primary:hover { background: #C93E12; }
+
+    /* HERO */
+    .hero {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 4rem 2rem 2rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      align-items: center;
+    }
+
+    .hero-eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-size: 0.78rem;
+      font-weight: 600;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+      padding: 0.35rem 0.85rem;
+      border-radius: var(--pill-radius);
+      margin-bottom: 1.2rem;
+    }
+
+    .hero h1 {
+      font-family: 'Syne', sans-serif;
+      font-size: 3.4rem;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -1.5px;
+      margin-bottom: 1rem;
+    }
+
+    .hero h1 em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero p {
+      font-size: 1rem;
+      color: var(--muted);
+      line-height: 1.7;
+      margin-bottom: 2rem;
+      max-width: 420px;
+    }
+
+    .hero-actions {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .hero-actions .btn-primary {
+      padding: 0.75rem 1.75rem;
+      font-size: 0.95rem;
+    }
+
+    .hero-actions .btn-ghost {
+      padding: 0.75rem 1.5rem;
+      font-size: 0.95rem;
+    }
+
+    .hero-stats {
+      display: flex;
+      gap: 2rem;
+      margin-top: 2.5rem;
+    }
+
+    .stat-item { text-align: left; }
+
+    .stat-num {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--dark);
+      display: block;
+    }
+
+    .stat-label {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    /* HERO VISUAL */
+    .hero-visual {
+      display: flex;
+      justify-content: center;
+      position: relative;
+    }
+
+    .phone-frame {
+      width: 260px;
+      background: var(--surface);
+      border-radius: 36px;
+      border: 1.5px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 32px 64px rgba(26,18,8,0.12);
+    }
+
+    .phone-header {
+      background: var(--accent);
+      padding: 1.2rem 1.2rem 0.8rem;
+      color: #fff;
+    }
+
+    .phone-header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .phone-greeting {
+      font-size: 0.72rem;
+      opacity: 0.85;
+    }
+
+    .phone-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+    }
+
+    .phone-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.25);
+      display: flex;
+      align-items: center;
+      justify-content: font-size;
+      font-size: 0.75rem;
+      font-weight: 600;
+      justify-content: center;
+    }
+
+    .phone-search {
+      background: rgba(255,255,255,0.2);
+      border-radius: 10px;
+      padding: 0.5rem 0.8rem;
+      font-size: 0.78rem;
+      color: rgba(255,255,255,0.75);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .phone-body { padding: 1rem; }
+
+    .phone-section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 0.6rem;
+    }
+
+    .category-pills {
+      display: flex;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .pill {
+      font-size: 0.7rem;
+      font-weight: 500;
+      padding: 0.3rem 0.75rem;
+      border-radius: var(--pill-radius);
+      border: 1px solid var(--border);
+      color: var(--muted);
+      background: var(--surface);
+      cursor: pointer;
+    }
+
+    .pill.active {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .food-card {
+      background: var(--bg);
+      border-radius: 14px;
+      padding: 0.75rem;
+      margin-bottom: 0.6rem;
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+    }
+
+    .food-img {
+      width: 52px;
+      height: 52px;
+      border-radius: 10px;
+      background: linear-gradient(135deg, #FDDAB0, #F9B47A);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      flex-shrink: 0;
+    }
+
+    .food-info { flex: 1; min-width: 0; }
+
+    .food-name {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 0.15rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .food-meta {
+      font-size: 0.68rem;
+      color: var(--muted);
+    }
+
+    .food-price {
+      font-family: 'Syne', sans-serif;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--accent);
+    }
+
+    /* CATEGORIES SECTION */
+    .section {
+      max-width: 1100px;
+      margin: 3rem auto 0;
+      padding: 0 2rem;
+    }
+
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .section-link {
+      font-size: 0.875rem;
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: 500;
+    }
+
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
+    }
+
+    .category-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      padding: 1.5rem 1rem;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .category-card:hover {
+      transform: translateY(-3px);
+      border-color: var(--accent-dim);
+    }
+
+    .category-emoji {
+      font-size: 2.2rem;
+      display: block;
+      margin-bottom: 0.5rem;
+    }
+
+    .category-name {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--dark);
+      display: block;
+    }
+
+    .category-count {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    /* FEATURED RESTAURANTS */
+    .restaurants-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.25rem;
+    }
+
+    .restaurant-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--card-radius);
+      overflow: hidden;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .restaurant-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(26,18,8,0.1); }
+
+    .restaurant-banner {
+      height: 120px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 3rem;
+    }
+
+    .restaurant-body { padding: 1rem 1.1rem; }
+
+    .restaurant-name {
+      font-family: 'Syne', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 0.3rem;
+    }
+
+    .restaurant-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 0.75rem;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: var(--pill-radius);
+      background: var(--tag-bg);
+      color: var(--tag-text);
+      font-weight: 500;
+    }
+
+    .restaurant-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .rating {
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .rating-star { color: #F5A623; }
+
+    .delivery-info {
+      font-size: 0.75rem;
+      color: var(--muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .badge-free {
+      font-size: 0.68rem;
+      font-weight: 600;
+      background: var(--green-bg);
+      color: var(--green);
+      padding: 0.2rem 0.55rem;
+      border-radius: var(--pill-radius);
+    }
+
+    /* PROMO BANNER */
+    .promo-banner {
+      max-width: 1100px;
+      margin: 3rem auto 0;
+      padding: 0 2rem;
+    }
+
+    .promo-card {
+      background: var(--dark);
+      color: #fff;
+      border-radius: var(--card-radius);
+      padding: 2rem 2.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .promo-text h3 {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 700;
+      margin-bottom: 0.5rem;
+    }
+
+    .promo-text p {
+      font-size: 0.875rem;
+      opacity: 0.65;
+      max-width: 320px;
+    }
+
+    .promo-code {
+      background: var(--accent);
+      padding: 1rem 2rem;
+      border-radius: 14px;
+      text-align: center;
+    }
+
+    .promo-code-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      opacity: 0.8;
+      margin-bottom: 0.25rem;
+    }
+
+    .promo-code-value {
+      font-family: 'Syne', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+    }
+
+    /* FOOTER */
+    footer {
+      max-width: 1100px;
+      margin: 3rem auto 2rem;
+      padding: 2rem 2rem 0;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .footer-logo {
+      font-family: 'Syne', sans-serif;
+      font-weight: 800;
+      font-size: 1.1rem;
+      color: var(--dark);
+    }
+
+    .footer-logo span { color: var(--accent); }
+
+    .footer-note {
+      font-size: 0.78rem;
+      color: var(--muted);
+    }
+
+    .footer-note code {
+      background: var(--border);
+      padding: 0.15rem 0.45rem;
+      border-radius: 5px;
+      font-family: 'DM Mono', monospace;
+      font-size: 0.72rem;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <div class="logo">Quick<span>Bite</span></div>
+    <ul class="nav-links">
+      <li><a href="#" class="active">Inicio</a></li>
+      <li><a href="#">Restaurantes</a></li>
+      <li><a href="#">Mis pedidos</a></li>
+      <li><a href="#">Ofertas</a></li>
+    </ul>
+    <div class="nav-actions">
+      <button class="btn btn-ghost">Iniciar sesión</button>
+      <button class="btn btn-primary">🛒 Carrito</button>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-eyebrow">🚴 Entrega en 30 min o menos</div>
+      <h1>Tu comida<br/>favorita,<br/><em>en tu puerta.</em></h1>
+      <p>Descubre cientos de restaurantes locales. Ordena rápido, rastrea en tiempo real y disfruta sin salir de casa.</p>
+      <div class="hero-actions">
+        <button class="btn btn-primary">Ordenar ahora</button>
+        <button class="btn btn-ghost">Ver restaurantes</button>
+      </div>
+      <div class="hero-stats">
+        <div class="stat-item">
+          <span class="stat-num">200+</span>
+          <span class="stat-label">Restaurantes</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">3 países</span>
+          <span class="stat-label">MX · CO · ES</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-num">4.8 ★</span>
+          <span class="stat-label">Calificación promedio</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="phone-frame">
+        <div class="phone-header">
+          <div class="phone-header-top">
+            <div>
+              <div class="phone-greeting">Buenas tardes 👋</div>
+              <div class="phone-title">¿Qué comes hoy?</div>
+            </div>
+            <div class="phone-avatar">MX</div>
+          </div>
+          <div class="phone-search">🔍 &nbsp;Buscar platillo o restaurante…</div>
+        </div>
+        <div class="phone-body">
+          <div class="phone-section-label">Categorías</div>
+          <div class="category-pills">
+            <span class="pill active">Todos</span>
+            <span class="pill">🍕 Pizza</span>
+            <span class="pill">🌮 Tacos</span>
+            <span class="pill">🍣 Sushi</span>
+          </div>
+          <div class="phone-section-label">Populares</div>
+          <div class="food-card">
+            <div class="food-img">🌮</div>
+            <div class="food-info">
+              <div class="food-name">Tacos de pastor</div>
+              <div class="food-meta">El Güero · 15 min</div>
+            </div>
+            <div class="food-price">$89</div>
+          </div>
+          <div class="food-card">
+            <div class="food-img">🍕</div>
+            <div class="food-info">
+              <div class="food-name">Pizza Margherita</div>
+              <div class="food-meta">La Italiana · 25 min</div>
+            </div>
+            <div class="food-price">$149</div>
+          </div>
+          <div class="food-card">
+            <div class="food-img">🍣</div>
+            <div class="food-info">
+              <div class="food-name">Roll California</div>
+              <div class="food-meta">Tokyo Bites · 20 min</div>
+            </div>
+            <div class="food-price">$129</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section class="section">
+    <div class="section-header">
+      <h2 class="section-title">Explorar categorías</h2>
+      <a href="#" class="section-link">Ver todas →</a>
+    </div>
+    <div class="categories-grid">
+      <div class="category-card">
+        <span class="category-emoji">🌮</span>
+        <span class="category-name">Mexicana</span>
+        <span class="category-count">48 restaurantes</span>
+      </div>
+      <div class="category-card">
+        <span class="category-emoji">🍕</span>
+        <span class="category-name">Italiana</span>
+        <span class="category-count">32 restaurantes</span>
+      </div>
+      <div class="category-card">
+        <span class="category-emoji">🍣</span>
+        <span class="category-name">Japonesa</span>
+        <span class="category-count">27 restaurantes</span>
+      </div>
+      <div class="category-card">
+        <span class="category-emoji">🍔</span>
+        <span class="category-name">Hamburguesas</span>
+        <span class="category-count">41 restaurantes</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- FEATURED RESTAURANTS -->
+  <section class="section" style="margin-bottom: 1rem;">
+    <div class="section-header">
+      <h2 class="section-title">Restaurantes destacados</h2>
+      <a href="#" class="section-link">Ver todos →</a>
+    </div>
+    <div class="restaurants-grid">
+      <div class="restaurant-card">
+        <div class="restaurant-banner" style="background: #FDE8D8;">🌮</div>
+        <div class="restaurant-body">
+          <div class="restaurant-name">El Güero Taquería</div>
+          <div class="restaurant-tags">
+            <span class="tag">Mexicana</span>
+            <span class="tag">Tacos</span>
+          </div>
+          <div class="restaurant-meta">
+            <div class="rating"><span class="rating-star">★</span> 4.9 <span style="font-weight:400;color:var(--muted)">(312)</span></div>
+            <div class="delivery-info">🕑 15 min &nbsp;<span class="badge-free">Envío gratis</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="restaurant-card">
+        <div class="restaurant-banner" style="background: #F5E8D8;">🍕</div>
+        <div class="restaurant-body">
+          <div class="restaurant-name">La Italiana</div>
+          <div class="restaurant-tags">
+            <span class="tag">Italiana</span>
+            <span class="tag">Pizza</span>
+          </div>
+          <div class="restaurant-meta">
+            <div class="rating"><span class="rating-star">★</span> 4.7 <span style="font-weight:400;color:var(--muted)">(187)</span></div>
+            <div class="delivery-info">🕑 25 min &nbsp;$25 envío</div>
+          </div>
+        </div>
+      </div>
+      <div class="restaurant-card">
+        <div class="restaurant-banner" style="background: #E8F0F5;">🍣</div>
+        <div class="restaurant-body">
+          <div class="restaurant-name">Tokyo Bites</div>
+          <div class="restaurant-tags">
+            <span class="tag">Japonesa</span>
+            <span class="tag">Sushi</span>
+          </div>
+          <div class="restaurant-meta">
+            <div class="rating"><span class="rating-star">★</span> 4.8 <span style="font-weight:400;color:var(--muted)">(254)</span></div>
+            <div class="delivery-info">🕑 20 min &nbsp;<span class="badge-free">Envío gratis</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PROMO BANNER -->
+  <div class="promo-banner">
+    <div class="promo-card">
+      <div class="promo-text">
+        <h3>Primera orden, sin costo de envío 🎉</h3>
+        <p>Usa el código al momento de pagar y disfruta envío gratis en tu primer pedido con QuickBite.</p>
+      </div>
+      <div class="promo-code">
+        <div class="promo-code-label">Código de descuento</div>
+        <div class="promo-code-value">FIRST30</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">Quick<span>Bite</span></div>
+    <div class="footer-note">
+      Versión <code>v1.0.0</code> · Práctica de control de versiones — Git
+    </div>
+  </footer>
+
+</body>
+</html>
